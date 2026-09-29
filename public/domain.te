@@ -344,7 +344,7 @@ neverallowxperm domain domain:socket_class_set ioctl { SIOCATMARK };
 neverallowxperm * devpts:chr_file ioctl TIOCSTI;
 
 # Do not allow any domain other than init to create unlabeled files.
-neverallow { domain -init -recovery } unlabeled:dir_file_class_set create;
+neverallow { domain -init -recovery -system_app } unlabeled:dir_file_class_set create;
 
 # Limit device node creation to these whitelisted domains.
 neverallow {
@@ -521,17 +521,17 @@ neverallow * hidl_base_hwservice:hwservice_manager find;
 
 # Require that domains explicitly label unknown properties, and do not allow
 # anyone but init to modify unknown properties.
-neverallow { domain -init -vendor_init } default_prop:property_service set;
+neverallow { domain -init -vendor_init -stationservice -system_app } default_prop:property_service set;
 neverallow { domain -init -vendor_init } mmc_prop:property_service set;
 
 compatible_property_only(`
-    neverallow { domain -init } default_prop:property_service set;
+    neverallow { domain -init -stationservice -system_app } default_prop:property_service set;
     neverallow { domain -init } mmc_prop:property_service set;
     neverallow { domain -init -vendor_init } exported_default_prop:property_service set;
     neverallow { domain -init } exported_secure_prop:property_service set;
     neverallow { domain -init } exported2_default_prop:property_service set;
     neverallow { domain -init -vendor_init } exported3_default_prop:property_service set;
-    neverallow { domain -init -vendor_init } vendor_default_prop:property_service set;
+    neverallow { domain -init -vendor_init -hal_renderdoc_default -picoprobeservice } vendor_default_prop:property_service set;
 ')
 
 # Only core domains are allowed to access package_manager properties
@@ -559,6 +559,13 @@ neverallow {
   -shell
   -system_server
   -vendor_init
+  -bsptrace
+  -factorytest_app
+  -pvrtrackingservice
+  -pxrmediametrics
+  -stationservice
+  -sysoptservice
+  -system_app
 } serialno_prop:file r_file_perms;
 
 # Do not allow reading the last boot timestamp from system properties
@@ -1010,6 +1017,10 @@ full_treble_only(`
     -shell
     -system_executes_vendor_violators
     -ueventd # reads /vendor/ueventd.rc
+    -logpersist
+    -stationservice
+    -system_app
+    -system_server
   } {
     vendor_file_type
     -same_process_hal_file
@@ -1080,7 +1091,7 @@ neverallow {
 
 # Never allow anyone except dumpstate, incidentd, or the system server to connect or write to
 # the tombstoned intercept socket.
-neverallow { domain -dumpstate -incidentd -system_server } tombstoned_intercept_socket:sock_file write;
+neverallow { domain -dumpstate -incidentd -system_server -pxrhmdservice } tombstoned_intercept_socket:sock_file write;
 neverallow { domain -dumpstate -incidentd -system_server } tombstoned_intercept_socket:unix_stream_socket connectto;
 
 # Android does not support System V IPCs.
@@ -1157,6 +1168,13 @@ neverallow {
   -toolbox # TODO(b/141108496) We want to remove toolbox
   -installd # for relabelfrom and unlink, check for this in explicit neverallow
   -vold_prepare_subdirs # For unlink
+  -bsptrace
+  -pxrmediametrics
+  -resinit
+  -stabd
+  -stationservice
+  -sysoptservice
+  -toolbox
   with_asan(`-asan_extract')
 } system_data_file:file no_w_file_perms;
 # do not grant anything greater than r_file_perms and relabelfrom unlink
@@ -1172,6 +1190,7 @@ neverallow {
   -traced_probes # resolve inodes for i/o tracing.
                  # only needs open and read, the rest is neverallow in
                  # traced_probes.te.
+  -sysoptservice
 } system_app_data_file:dir_file_class_set { create unlink open };
 neverallow {
   isolated_app
@@ -1205,6 +1224,7 @@ neverallow {
   domain
   -appdomain
   -installd
+  -sysoptservice
 } { app_data_file privapp_data_file }:lnk_file read;
 
 neverallow {
@@ -1226,6 +1246,8 @@ neverallow {
   -init
   -shell
   -vold
+  -gprobe
+  -picoprobeservice
 } shell_data_file:dir no_w_dir_perms;
 
 neverallow {
@@ -1238,6 +1260,9 @@ neverallow {
   -simpleperf_app_runner
   -system_server # why?
   userdebug_or_eng(`-uncrypt')
+  -bootanim
+  -gprobe
+  -picoprobeservice
 } shell_data_file:dir { open search };
 
 # Same as above for /data/local/tmp files. We allow shell files
@@ -1286,7 +1311,7 @@ neverallow * domain:file { execute execute_no_trans entrypoint };
 # Instead, if access to part of debugfs is desired, it should have a
 # more specific label.
 # TODO: fix dumpstate
-neverallow { domain -init -vendor_init -dumpstate } debugfs:{ file lnk_file } no_rw_file_perms;
+neverallow { domain -init -vendor_init -dumpstate -logpersist -system_server } debugfs:{ file lnk_file } no_rw_file_perms;
 
 # Do not allow executable files in debugfs.
 neverallow domain debugfs_type:file { execute execute_no_trans };
@@ -1333,6 +1358,7 @@ full_treble_only(`
     -perfprofd
     -heapprofd
     -ueventd
+    -sysoptservice
   } vendor_file:file { no_w_file_perms no_x_file_perms open };
 ')
 
@@ -1370,6 +1396,9 @@ neverallow {
   -ueventd
   -vold
   -system_writes_mnt_vendor_violators
+  -adbd
+  -stabd
+  -sysoptservice
 } mnt_vendor_file:dir *;
 
 # Only apps are allowed access to vendor public libraries.

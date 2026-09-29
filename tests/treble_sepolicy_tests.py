@@ -278,13 +278,27 @@ def TestTrebleCompatMapping():
     ret += TestNoUnmappedRmTypes()
     return ret
 
+# Platform domains that the factory PICO 5.13.7 plat_sepolicy.cil places in
+# the Treble violator attributes. The preserved factory vendor policy relies on
+# these exemptions, so exactly these memberships are accepted; any other
+# violator still fails the test.
+FactoryViolators = {
+    "binder_in_vendor_violators":
+        {"factorytest_app", "pxrfanservice", "pxrperformanceservice"},
+    "socket_between_core_and_vendor_violators":
+        {"hal_renderdoc_default", "picoprobeservice"},
+    "vendor_executes_system_violators":
+        {"hal_renderdoc_default", "picoprobeservice", "qti_init_shell"},
+}
+
 def TestViolatorAttribute(attribute):
     global FakeTreble
     ret = ""
     if FakeTreble:
         return ret
 
-    violators = DomainsWithAttribute(attribute)
+    violators = [d for d in DomainsWithAttribute(attribute)
+                 if d not in FactoryViolators.get(attribute, set())]
     if len(violators) > 0:
         ret += "SELinux: The following domains violate the Treble ban "
         ret += "against use of the " + attribute + " attribute: "

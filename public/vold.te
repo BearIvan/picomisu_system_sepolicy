@@ -250,6 +250,7 @@ allow vold gsi_metadata_file:file r_file_perms;
 
 neverallow {
     domain
+    -init
     -vold
     -vold_prepare_subdirs
 } vold_data_file:dir ~{ open create read getattr setattr search relabelfrom relabelto ioctl };
@@ -269,6 +270,7 @@ neverallow {
 
 neverallow {
     domain
+    -init
     -kernel
     -vold
     -vold_prepare_subdirs

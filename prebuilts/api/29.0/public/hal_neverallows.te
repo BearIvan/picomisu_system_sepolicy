@@ -7,6 +7,7 @@ neverallow {
   -hal_wifi_hostapd_server
   -hal_wifi_supplicant_server
   -hal_telephony_server
+  -hal_renderdoc_default
 } self:global_capability_class_set { net_admin net_raw };
 
 # Unless a HAL's job is to communicate over the network, or control network
@@ -23,6 +24,7 @@ neverallow {
   -hal_wifi_hostapd_server
   -hal_wifi_supplicant_server
   -hal_telephony_server
+  -hal_renderdoc_default
 } domain:{ tcp_socket udp_socket rawip_socket } *;
 
 ###

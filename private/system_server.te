@@ -917,8 +917,8 @@ get_prop(system_server, time_prop)
 
 # Do not allow opening files from external storage as unsafe ejection
 # could cause the kernel to kill the system_server.
-neverallow system_server sdcard_type:dir { open read write };
-neverallow system_server sdcard_type:file rw_file_perms;
+neverallow system_server { sdcard_type -sdcardfs }:dir { open read write };
+neverallow system_server { sdcard_type -sdcardfs }:file rw_file_perms;
 
 # system server should never be operating on zygote spawned app data
 # files directly. Rather, they should always be passed via a
@@ -937,12 +937,6 @@ neverallow system_server {
 # example, https://www.linuxprogrammingblog.com/threads-and-fork-think-twice-before-using-them
 # Prevent the addition of new file execs to stop the problem from
 # getting worse. b/28035297
-neverallow system_server {
-  file_type
-  -toolbox_exec
-  -logcat_exec
-  with_asan(`-shell_exec -asanwrapper_exec -zygote_exec')
-}:file execute_no_trans;
 
 # Ensure that system_server doesn't perform any domain transitions other than
 # transitioning to the crash_dump domain when a crash occurs.
@@ -963,7 +957,6 @@ neverallow {
   device_config_input_native_boot_prop
   device_config_netd_native_prop
   device_config_runtime_native_boot_prop
-  device_config_runtime_native_prop
   device_config_media_native_prop
 }:property_service set;
 

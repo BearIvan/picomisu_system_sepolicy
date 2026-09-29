@@ -93,6 +93,13 @@ neverallow {
   -storaged
   -system_server
   userdebug_or_eng(`-perfprofd')
+  -bpfserver
+  -nettools
+  -pvrtrackingservice
+  -pxrhmdservice
+  -pxrperformanceservice
+  -stationservice
+  -sysoptservice
 } self:global_capability_class_set sys_ptrace;
 
 # Limit ability to generate hardware unique device ID attestations to priv_apps
@@ -103,12 +110,16 @@ neverallow {
   -init
   -vendor_init
   userdebug_or_eng(`-domain')
+  -bpfserver
+  -hal_atrace_default
+  -nettools
+  -sysoptservice
 } debugfs_tracing_debug:file no_rw_file_perms;
 
 # System_server owns dropbox data, and init creates/restorecons the directory
 # Disallow direct access by other processes.
-neverallow { domain -init -system_server } dropbox_data_file:dir *;
-neverallow { domain -init -system_server } dropbox_data_file:file ~{ getattr read };
+neverallow { domain -init -system_server -sysoptservice } dropbox_data_file:dir *;
+neverallow { domain -init -system_server -sysoptservice } dropbox_data_file:file ~{ getattr read };
 
 ###
 # Services should respect app sandboxes
@@ -133,6 +144,7 @@ neverallow {
   -runas
   -system_server
   -viewcompiler
+  -sysoptservice
 } { privapp_data_file app_data_file }:dir *;
 
 # Only apps should be modifying app data. installd is exempted for
@@ -151,6 +163,7 @@ neverallow {
   -installd
   userdebug_or_eng(`-perfprofd')
   -rs # spawned by appdomain, so carryover the exception above
+  -sysoptservice
 } { privapp_data_file app_data_file }:file_class_set open;
 
 neverallow {
@@ -168,7 +181,7 @@ neverallow {
 # that these files cannot be accessed by other domains to ensure that the files
 # do not change between system_server staging the files and apexd processing
 # the files.
-neverallow { domain -init -system_server -apexd -installd} staging_data_file:dir *;
+neverallow { domain -init -system_server -apexd -installd -pxr_init_service -pxrstreamingservice} staging_data_file:dir *;
 neverallow { domain -init -system_app -system_server -apexd -kernel -installd } staging_data_file:file *;
 neverallow { domain -init -system_server -installd} staging_data_file:dir no_w_dir_perms;
 # apexd needs the link and unlink permissions, so list every `no_w_file_perms`
@@ -271,6 +284,27 @@ define(`dac_override_allowed', `{
   vold
   vold_prepare_subdirs
   zygote
+  bootanim
+  gd32ipdservice
+  hal_renderdoc_default
+  logd
+  logpersist
+  nettools
+  pvrtrackingservice
+  pxr_init_service
+  pxrcontrollerservice
+  pxreyetrackingservice
+  pxrfanservice
+  pxrhmdservice
+  pxrmrsystemservice
+  pxrseethroughservice
+  pxrstreamingservice
+  qti_init_shell
+  resinit
+  stabd
+  stationservice
+  sysoptservice
+  toolbox
 }')
 neverallow ~dac_override_allowed self:global_capability_class_set dac_override;
 # Since the kernel checks dac_read_search before dac_override, domains that

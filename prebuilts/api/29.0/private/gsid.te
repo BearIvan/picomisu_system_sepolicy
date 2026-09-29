@@ -97,6 +97,7 @@ neverallow {
     -gsid
     -fastbootd
     -vold
+    -uncrypt
 } gsi_metadata_file:dir *;
 
 neverallow {
@@ -105,6 +106,7 @@ neverallow {
     -gsid
     -fastbootd
     -vold
+    -uncrypt
 } gsi_metadata_file:notdevfile_class_set ~{ relabelto getattr };
 
 neverallow {
@@ -113,6 +115,7 @@ neverallow {
     -gsid
     -fastbootd
     -vold
+    -uncrypt
 } { gsi_data_file gsi_metadata_file }:notdevfile_class_set *;
 
 neverallow {

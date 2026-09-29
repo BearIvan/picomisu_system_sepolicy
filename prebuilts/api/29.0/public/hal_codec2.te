@@ -1,7 +1,12 @@
 binder_call(hal_codec2_client, hal_codec2_server)
 binder_call(hal_codec2_server, hal_codec2_client)
 
-hal_attribute_hwservice(hal_codec2, hal_codec2_hwservice)
+# hal_attribute_hwservice(hal_codec2, hal_codec2_hwservice) with the factory pxrcontrollerservice exception.
+allow hal_codec2_client hal_codec2_hwservice:hwservice_manager find;
+add_hwservice(hal_codec2_server, hal_codec2_hwservice)
+build_test_only(`
+  neverallow { domain -hal_codec2_client -hal_codec2_server -pxrcontrollerservice } hal_codec2_hwservice:hwservice_manager find;
+')
 
 # The following permissions are added to hal_codec2_server because vendor and
 # vndk libraries provided for Codec2 implementation need them.

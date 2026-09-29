@@ -193,6 +193,12 @@ compatible_property_only(`
     -coredomain
     -appdomain
     -vendor_init
+    -hal_audio_default
+    -hal_bluetooth_default
+    -hal_camera_default
+    -hal_quickcamera_default
+    -hal_renderdoc_default
+    -qti_init_shell
   } {
     core_property_type
     extended_core_property_type
@@ -290,6 +296,12 @@ compatible_property_only(`
     -coredomain
     -appdomain
     -vendor_init
+    -hal_audio_default
+    -hal_bluetooth_default
+    -hal_camera_default
+    -hal_quickcamera_default
+    -hal_renderdoc_default
+    -qti_init_shell
   } {
     core_property_type
     extended_core_property_type
@@ -349,6 +361,7 @@ compatible_property_only(`
   # Neverallow coredomain to set vendor properties
   neverallow {
     coredomain
+    -audioserver
     -init
     -system_writes_vendor_properties_violators
   } {
@@ -466,6 +479,10 @@ compatible_property_only(`
     -vendor_security_patch_level_prop
     -vold_prop
     -wifi_log_prop
+    -coredump_tailor_prop
+    -gpumem_stat_prop
+    -gwp_asan_prop
+    -native_leak_prop
     -wifi_prop
   }:property_service set;
 ')

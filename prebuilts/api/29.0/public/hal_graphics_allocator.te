@@ -1,7 +1,12 @@
 # HwBinder IPC from client to server
 binder_call(hal_graphics_allocator_client, hal_graphics_allocator_server)
 
-hal_attribute_hwservice(hal_graphics_allocator, hal_graphics_allocator_hwservice)
+# hal_attribute_hwservice(hal_graphics_allocator, hal_graphics_allocator_hwservice) with the factory pxreyetrackingservice exception.
+allow hal_graphics_allocator_client hal_graphics_allocator_hwservice:hwservice_manager find;
+add_hwservice(hal_graphics_allocator_server, hal_graphics_allocator_hwservice)
+build_test_only(`
+  neverallow { domain -hal_graphics_allocator_client -hal_graphics_allocator_server -pxreyetrackingservice } hal_graphics_allocator_hwservice:hwservice_manager find;
+')
 allow hal_graphics_allocator_client hal_graphics_mapper_hwservice:hwservice_manager find;
 allow hal_graphics_allocator_client same_process_hal_file:file { execute read open getattr map };
 

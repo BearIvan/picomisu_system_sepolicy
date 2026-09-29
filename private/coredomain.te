@@ -30,6 +30,7 @@ full_treble_only(`
         -postinstall_dexopt
         -rs # spawned by appdomain, so carryover the exception above
         -system_server
+        -sysoptservice
     } vendor_app_file:dir { open read getattr search };
 ')
 
@@ -47,6 +48,7 @@ full_treble_only(`
         -rs # spawned by appdomain, so carryover the exception above
         -system_server
         -mediaserver
+        -sysoptservice
     } vendor_app_file:file r_file_perms;
 ')
 
@@ -94,6 +96,11 @@ full_treble_only(`
     coredomain
     -init
     -vold
+    -logpersist
+    -nettools
+    -stabd
+    -sysoptservice
+    -traced_probes
   } proc:file no_rw_file_perms;
 
   # /sys
@@ -102,6 +109,16 @@ full_treble_only(`
     -init
     -ueventd
     -vold
+    -bpfserver
+    -bsptrace
+    -crash_dump
+    -fsck
+    -logpersist
+    -nettools
+    -pxrfanservice
+    -pxrhmdservice
+    -sysoptservice
+    -system_server
   } sysfs:file no_rw_file_perms;
 
   # /dev
@@ -118,6 +135,7 @@ full_treble_only(`
     -dumpstate
     -init
     -system_server
+    -logpersist
   } debugfs:file no_rw_file_perms;
 
   # tracefs
@@ -130,6 +148,8 @@ full_treble_only(`
     -traced_probes
     -shell
     -traceur_app
+    -nettools
+    -sysoptservice
   } debugfs_tracing:file no_rw_file_perms;
 
   # inotifyfs
