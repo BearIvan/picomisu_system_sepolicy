@@ -152,4 +152,7 @@ class hwservice_manager
 class keystore_key              # userspace
 
 class drmservice                # userspace
+
+# Perf events (factory PICO 5.13.7 backport of the Android 11 class)
+class perf_event
 # FLASK
