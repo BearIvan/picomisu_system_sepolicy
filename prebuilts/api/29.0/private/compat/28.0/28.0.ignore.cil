@@ -147,4 +147,46 @@
     vendor_misc_writer_exec
     vendor_task_profiles_file
     vrflinger_vsync_service
-    watchdogd_tmpfs))
+    watchdogd_tmpfs
+    ;; PICO 5.13.7 factory platform types (tools/reconstruct-factory-sepolicy.py)
+    XR_coredump_file
+    bsptrace
+    coredump_tailor_prop
+    debugfs_dump_sched_tracing
+    debugfs_mm_events_tracing
+    factorytest_app
+    gd32ipdservice
+    gprobe
+    gpumem_stat_prop
+    gwp_asan_prop
+    hal_atrace_default
+    hal_audio_default
+    hal_bluetooth_default
+    hal_camera_default
+    hal_miscproxy_default
+    hal_perf_default
+    hal_perf_hwservice
+    hal_quickcamera_default
+    hal_renderdoc_default
+    hal_seethrough_default
+    log_data_file
+    native_leak_prop
+    nativeleak_data_file
+    picoprobeservice
+    pvrtrackingservice
+    pxr_init_service
+    pxrcontrollerservice
+    pxreyetrackingservice
+    pxrfanservice
+    pxrhmdservice
+    pxrmediametrics
+    pxrmrsystemservice
+    pxrperformanceservice
+    pxrseethroughservice
+    pxrstreamingservice
+    qti_init_shell
+    resinit
+    stabd
+    stationservice
+    sysmtpservice
+    sysoptservice))
